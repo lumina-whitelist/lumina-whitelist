@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina AI Whitelist</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f3f4f6; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .container { background: #fff; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
+  input, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
+  button { background: #2563eb; color: white; border: none; cursor: pointer; }
+  button:hover { background: #1e40af; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Lumina AI Whitelist</h1>
+  <input type="email" id="email" placeholder="Enter your email">
+  <input type="text" id="twitter" placeholder="Enter Twitter username">
+  <button onclick="submitForm()">Join Whitelist</button>
+  <p id="message"></p>
+</div>
+
+<script>
+function submitForm() {
+  const email = document.getElementById("email").value;
+  const twitter = document.getElementById("twitter").value;
+  if(!email || !twitter){
+    document.getElementById("message").innerText = "Please fill all fields!";
+    return;
+  }
+  // For now, just show success message
+  document.getElementById("message").innerText = "✅ You are whitelisted!";
+  // Later we can connect this to email verification
+}
+</script>
+</body>
+</html>
