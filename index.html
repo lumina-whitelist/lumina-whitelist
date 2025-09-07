@@ -5,212 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina AI Whitelist</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
-            box-sizing: border-box;
         }
 
         .container {
             background: #ffffff;
             padding: 40px;
-            border-radius: 15px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .container:hover {
-            transform: translateY(-5px);
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .brain-icon {
-            font-size: 3rem;
-            color: #2563eb;
+            font-size: 4rem;
             margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         h1 {
-            color: #111827;
-            font-size: 2rem;
-            margin: 0 0 10px 0;
+            color: #2d3748;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
             font-weight: 700;
         }
 
         .subtitle {
-            color: #6b7280;
+            color: #718096;
             margin-bottom: 30px;
             font-size: 1.1rem;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: left;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #374151;
-            font-size: 0.95rem;
+            color: #4a5568;
+            font-size: 1rem;
         }
 
         .icon {
             margin-right: 8px;
-            color: #2563eb;
+            color: #667eea;
+            font-size: 1.1rem;
         }
 
         input {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #d1d5db;
-            border-radius: 10px;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background-color: #ffffff;
-            box-sizing: border-box;
+            background-color: #f8fafc;
+            color: #2d3748;
         }
 
         input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #667eea;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             transform: translateY(-2px);
         }
 
         input::placeholder {
-            color: #9ca3af;
+            color: #a0aec0;
         }
 
         button {
             width: 100%;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
-            background: linear-gradient(135deg, #1e40af, #1e3a8a);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
         button:active {
             transform: translateY(0);
         }
 
-        .message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: 500;
-            display: none;
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-
-        .error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
-
-        .features {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-top: 30px;
-        }
-
-        .features h3 {
-            margin: 0 0 20px 0;
-            font-size: 1.3rem;
-        }
-
-        .benefits {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .benefit {
-            text-align: center;
-            flex: 1;
-        }
-
-        .benefit-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .benefit-text {
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        .security {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .security-icon {
-            margin-right: 5px;
-            color: #2563eb;
-        }
-
-        /* Responsive design */
-        @media (max-width: 480px) {
-            .container {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 1.7rem;
-            }
-
-            .benefits {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .benefit {
-                display: flex;
-                align-items: center;
-                text-align: left;
-            }
-
-            .benefit-icon {
-                margin-right: 15px;
-                margin-bottom: 0;
-            }
-        }
-
-        /* Loading animation */
         .loading {
-            position: relative;
             color: transparent !important;
         }
 
@@ -223,70 +174,297 @@
             left: 50%;
             margin-left: -10px;
             margin-top: -10px;
-            border: 2px solid #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: transparent;
+            border-top-color: #ffffff;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .error {
+            background-color: #fed7d7;
+            color: #c53030;
+            border-left: 4px solid #f56565;
+        }
+
+        .success {
+            background-color: #c6f6d5;
+            color: #2f855a;
+            border-left: 4px solid #48bb78;
+        }
+
+        .security {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .security-icon {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        /* Congratulations Step Styles */
+        .congrats-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-animation {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite, bounceIn 0.6s ease-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .checkmark {
+            font-size: 4rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .congrats-title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .congrats-message {
+            font-size: 1.2rem;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .email-sent {
+            background: linear-gradient(135deg, #ebf8ff, #bee3f8);
+            border: 2px solid #90cdf4;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .email-icon {
+            font-size: 2.5rem;
+            color: #3182ce;
+            margin-bottom: 10px;
+        }
+
+        .email-text {
+            color: #2c5282;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .benefit-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .benefit-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .benefit-desc {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
             }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .congrats-title {
+                font-size: 2rem;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Blocked state */
+        .blocked-message {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            border: 2px solid #f56565;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .blocked-icon {
+            font-size: 3rem;
+            color: #c53030;
+            margin-bottom: 15px;
+        }
+
+        .blocked-text {
+            color: #742a2a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="brain-icon">🧠</div>
-        <h1>Lumina AI Whitelist</h1>
-        <p class="subtitle">Join the exclusive early access program</p>
+        <!-- Step 1: Registration Form -->
+        <div id="step1" class="step active">
+            <div class="brain-icon">🧠</div>
+            <h1>Lumina AI Whitelist</h1>
+            <p class="subtitle">Join the exclusive early access program</p>
 
-        <!-- Form -->
-        <form id="whitelistForm">
-            <div class="input-group">
-                <label for="email">
-                    <span class="icon">✉️</span>Email Address
-                </label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+            <form id="whitelistForm">
+                <div class="input-group">
+                    <label for="email">
+                        <span class="icon">✉️</span>Email Address
+                    </label>
+                    <input type="email" id="email" placeholder="Enter your email address" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="twitter">
+                        <span class="icon">🐦</span>Twitter Username
+                    </label>
+                    <input type="text" id="twitter" placeholder="Enter Twitter username (with or without @)" required>
+                </div>
+
+                <button type="submit" id="submitBtn">Join Whitelist</button>
+            </form>
+
+            <div id="message" class="message"></div>
+
+            <div class="security">
+                <span class="security-icon">🛡️</span>
+                Your information is secure and will only be used for whitelist purposes.
             </div>
-
-            <div class="input-group">
-                <label for="twitter">
-                    <span class="icon">🐦</span>Twitter Username
-                </label>
-                <input type="text" id="twitter" placeholder="Enter Twitter username (with or without @)" required>
-            </div>
-
-            <button type="submit" id="submitBtn">Join Whitelist</button>
-        </form>
-
-        <!-- Message area -->
-        <div id="message" class="message"></div>
-
-        <!-- Security note -->
-        <div class="security">
-            <span class="security-icon">🛡️</span>
-            Your information is secure and will only be used for whitelist purposes.
         </div>
 
-        <!-- Features section -->
-        <div class="features">
-            <h3>⭐ Early Access Benefits</h3>
-            <div class="benefits">
-                <div class="benefit">
-                    <span class="benefit-icon">🚀</span>
-                    <p class="benefit-text">First Access</p>
+        <!-- Step 2: Congratulations Page -->
+        <div id="step2" class="step">
+            <div class="congrats-container">
+                <div class="success-animation">
+                    <span class="checkmark">✓</span>
                 </div>
-                <div class="benefit">
-                    <span class="benefit-icon">👥</span>
-                    <p class="benefit-text">Exclusive Community</p>
+                
+                <h1 class="congrats-title">Congratulations!</h1>
+                <p class="congrats-message">
+                    You've been successfully added to the Lumina AI whitelist! 
+                    Welcome to our exclusive early access program.
+                </p>
+
+                <div class="email-sent">
+                    <div class="email-icon">📧</div>
+                    <div class="email-text">
+                        Confirmation email sent to your inbox!<br>
+                        <small>Check your email for next steps and updates.</small>
+                    </div>
                 </div>
-                <div class="benefit">
-                    <span class="benefit-icon">🎁</span>
-                    <p class="benefit-text">Special Perks</p>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <span class="benefit-icon">🚀</span>
+                        <div class="benefit-title">First Access</div>
+                        <div class="benefit-desc">Be among the first to experience Lumina AI</div>
+                    </div>
+                    <div class="benefit-card">
+                        <span class="benefit-icon">👥</span>
+                        <div class="benefit-title">Exclusive Community</div>
+                        <div class="benefit-desc">Join our private community of early adopters</div>
+                    </div>
+                    <div class="benefit-card">
+                        <span class="benefit-icon">🎁</span>
+                        <div class="benefit-title">Special Perks</div>
+                        <div class="benefit-desc">Enjoy exclusive features and benefits</div>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Already Registered (Blocked) -->
+        <div id="step3" class="step">
+            <div class="brain-icon">🧠</div>
+            <h1>Already Registered!</h1>
+            
+            <div class="blocked-message">
+                <div class="blocked-icon">🚫</div>
+                <div class="blocked-text">
+                    You're already on our whitelist!<br>
+                    Check your email for confirmation and updates.
+                </div>
+            </div>
+
+            <p class="congrats-message">
+                Thanks for your interest in Lumina AI. We'll keep you updated on our progress and notify you when early access becomes available.
+            </p>
+
+            <div class="security">
+                <span class="security-icon">📬</span>
+                Watch your inbox for exclusive updates and early access notifications.
             </div>
         </div>
     </div>
@@ -294,6 +472,18 @@
     <script>
         // Store submitted emails to prevent duplicates
         let submittedEmails = JSON.parse(localStorage.getItem('whitelistEmails') || '[]');
+        
+        // Check if user already submitted on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const step = urlParams.get('step');
+            
+            if (step === 'success') {
+                showStep('step2');
+            } else if (step === 'blocked') {
+                showStep('step3');
+            }
+        });
 
         document.getElementById('whitelistForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -304,8 +494,7 @@
             const messageDiv = document.getElementById('message');
 
             // Clear previous messages
-            messageDiv.style.display = 'none';
-            messageDiv.className = 'message';
+            hideMessage();
 
             // Validate inputs
             if (!email || !twitter) {
@@ -332,38 +521,46 @@
 
             // Check if email already submitted
             if (submittedEmails.includes(email)) {
-                showMessage('This email is already registered for the whitelist!', 'error');
+                showStep('step3');
                 return;
             }
 
             // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
+            submitBtn.textContent = '';
 
-            // Simulate form submission (replace with real API call)
+            // Simulate form submission and email sending
             setTimeout(() => {
                 // Store email to prevent duplicates
                 submittedEmails.push(email);
                 localStorage.setItem('whitelistEmails', JSON.stringify(submittedEmails));
 
-                // Log submission (in real app, send to server)
-                console.log('New whitelist submission:', {
+                // Store user data
+                const userData = {
                     email: email,
                     twitter: '@' + cleanTwitter,
-                    timestamp: new Date().toISOString()
-                });
+                    timestamp: new Date().toISOString(),
+                    id: Date.now()
+                };
+                
+                // Store in localStorage (in real app, send to server)
+                let allSubmissions = JSON.parse(localStorage.getItem('whitelistSubmissions') || '[]');
+                allSubmissions.push(userData);
+                localStorage.setItem('whitelistSubmissions', JSON.stringify(allSubmissions));
 
-                // Show success message
-                showMessage('✅ You have been successfully added to the Lumina AI whitelist!', 'success');
+                console.log('New whitelist submission:', userData);
 
-                // Reset form
-                document.getElementById('whitelistForm').reset();
+                // Simulate sending confirmation email
+                sendConfirmationEmail(email, cleanTwitter);
 
-                // Remove loading state
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
+                // Show congratulations step
+                showStep('step2');
 
-            }, 1500); // Simulate network delay
+                // Update URL without reload
+                window.history.pushState({}, '', '?step=success');
+
+            }, 2000); // Simulate network delay
         });
 
         // Auto-add @ to Twitter field when user leaves the field
@@ -380,25 +577,72 @@
             messageDiv.className = 'message ' + type;
             messageDiv.style.display = 'block';
 
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
+            // Auto-hide error messages after 5 seconds
+            if (type === 'error') {
                 setTimeout(() => {
-                    messageDiv.style.display = 'none';
+                    hideMessage();
                 }, 5000);
             }
         }
 
-        // Add smooth scroll effect for mobile
-        if (window.innerWidth <= 480) {
-            document.getElementById('whitelistForm').addEventListener('submit', function() {
-                setTimeout(() => {
-                    document.getElementById('message').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'nearest' 
-                    });
-                }, 100);
-            });
+        function hideMessage() {
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
         }
-    </script>
-</body>
-</html>
+
+        function showStep(stepId) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show selected step
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function sendConfirmationEmail(email, twitter) {
+            // In a real application, this would call your email API
+            // For now, we'll simulate the email sending
+            
+            console.log(`📧 Sending confirmation email to: ${email}`);
+            console.log(`📧 Email content:
+            
+Subject: Welcome to Lumina AI Whitelist! 🧠
+
+Dear ${twitter ? '@' + twitter : 'Valued User'},
+
+Congratulations! You've been successfully added to the Lumina AI exclusive whitelist.
+
+🎉 What's Next?
+• You'll be among the first to access Lumina AI when we launch
+• Exclusive updates and behind-the-scenes content
+• Special early adopter benefits and perks
+
+📬 Stay Tuned
+We'll keep you updated on our progress and notify you the moment early access becomes available.
+
+Thank you for joining our journey!
+
+Best regards,
+The Lumina AI Team
+
+---
+This email was sent because you signed up for the Lumina AI whitelist.
+            `);
+            
+            // Simulate API call to email service
+            // fetch('/api/send-email', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email, twitter })
+            // });
+        }
+
+        // Prevent going back to form after submission
+        window.addEventListener('popstate', function(e) {
+            const step = new URLSearchParams(window.location.search).get('step');
+            if (step === 'success') {
+                showStep('step2');
+            } else if (step === 'blocked') {
+     
