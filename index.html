@@ -14,8 +14,8 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0; padding: 0;
-      background: linear-gradient(135deg, #0a0a0f, #1a1a2e, #0f3460);
-      color: #fff;
+      background: #fff;
+      color: #000;
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
     }
@@ -23,50 +23,64 @@
       max-width: 420px;
       width: 90%;
       padding: 30px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      background: #f9f9f9;
+      border: 2px solid #000;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       text-align: center;
     }
-    h2 { color: #e5b80b; margin-bottom: 15px; }
+    h2 { color: #000; margin-bottom: 15px; }
     input, button {
       width: 100%; padding: 12px; margin: 10px 0;
-      border: none; border-radius: 8px;
+      border: 2px solid #000; border-radius: 8px;
       font-size: 15px;
     }
     input {
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-    }
-    input::placeholder { color: #bbb; }
-    button {
-      background: #e5b80b;
+      background: #fff;
       color: #000;
+    }
+    input::placeholder { color: #555; }
+    button {
+      background: #000;
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    button:hover { background: #ffd700; }
+    button:hover { background: #333; }
     .step { display:none; }
     .step.active { display:block; }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Step 1: Email + Twitter -->
     <div id="step1" class="step active">
-      <h2>Join Lumina AI Wallet – Day 1 Whitelist 🚀</h2>
-      <form id="whitelistForm">
+      <h2>Join Lumina AI Whitelist 🚀</h2>
+      <form id="step1Form">
         <input type="email" id="email" placeholder="Enter your email" required>
         <input type="text" id="twitter" placeholder="Enter your Twitter username">
-        <button type="submit" id="submitBtn">Join Whitelist</button>
+        <button type="submit">Next ➡️</button>
       </form>
     </div>
+
+    <!-- Step 2: Wallet Submission -->
     <div id="step2" class="step">
+      <h2>Submit Your Wallet</h2>
+      <form id="step2Form">
+        <input type="text" id="wallet" placeholder="Enter your wallet address" required>
+        <button type="submit">Submit ✅</button>
+      </form>
+    </div>
+
+    <!-- Step 3: Congratulations -->
+    <div id="step3" class="step">
       <h2>🎉 Congratulations!</h2>
       <p>You have successfully joined the Lumina AI Whitelist.</p>
     </div>
-    <div id="step3" class="step">
+
+    <!-- Step 4: Already Registered -->
+    <div id="step4" class="step">
       <h2>⚠️ Already Registered</h2>
       <p>This email is already whitelisted.</p>
     </div>
@@ -74,13 +88,15 @@
 
   <script>
     let submittedEmails = JSON.parse(localStorage.getItem('whitelistEmails') || '[]');
+    let tempData = {};
 
     function showStep(stepId){
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById(stepId).classList.add('active');
     }
 
-    document.getElementById('whitelistForm').addEventListener('submit', function(e){
+    // Step 1: Email + Twitter
+    document.getElementById('step1Form').addEventListener('submit', function(e){
       e.preventDefault();
       const email = document.getElementById('email').value.trim().toLowerCase();
       const twitter = document.getElementById('twitter').value.trim();
@@ -92,26 +108,49 @@
       }
 
       if(submittedEmails.includes(email)){ 
-        showStep('step3'); 
+        showStep('step4'); 
         return; 
       }
 
-      // Save locally
-      submittedEmails.push(email);
+      tempData.email = email;
+      tempData.twitter = twitter;
+
+      showStep('step2');
+    });
+
+    // Step 2: Wallet
+    document.getElementById('step2Form').addEventListener('submit', function(e){
+      e.preventDefault();
+      const wallet = document.getElementById('wallet').value.trim();
+      if(!wallet){
+        alert("Please enter a valid wallet address.");
+        return;
+      }
+
+      tempData.wallet = wallet;
+
+      // Save email
+      submittedEmails.push(tempData.email);
       localStorage.setItem('whitelistEmails', JSON.stringify(submittedEmails));
 
-      // Save submissions
+      // Save full submission
       let allSubmissions = JSON.parse(localStorage.getItem('whitelistSubmissions') || '[]');
-      allSubmissions.push({email: email, twitter: twitter, timestamp: new Date().toISOString(), id: Date.now()});
+      allSubmissions.push({
+        email: tempData.email,
+        twitter: tempData.twitter,
+        wallet: tempData.wallet,
+        timestamp: new Date().toISOString(),
+        id: Date.now()
+      });
       localStorage.setItem('whitelistSubmissions', JSON.stringify(allSubmissions));
 
       // ✅ Send email via EmailJS
       emailjs.send("service_qtl608z", "template_9bjhvsh", {
-        user_email: email
+        user_email: tempData.email
       })
       .then(() => {
         console.log("✅ Email sent successfully");
-        showStep('step2');
+        showStep('step3');
         window.history.pushState({}, '', '?step=success');
       })
       .catch((err) => {
