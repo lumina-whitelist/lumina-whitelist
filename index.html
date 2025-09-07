@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Lumina AI Whitelist</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#ffffff,#000000);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;color:#fff;}
-  .container{background:#111111;padding:40px;border-radius:20px;width:100%;max-width:500px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3);position:relative;overflow:hidden;}
+  .container{background:#111;padding:40px;border-radius:20px;width:100%;max-width:500px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3);position:relative;overflow:hidden;}
   h1{color:#fff;font-size:2.2rem;margin-bottom:10px;font-weight:700;}
   p{color:#ccc;margin-bottom:25px;}
   .input-group{margin-bottom:25px;text-align:left;}
@@ -66,7 +66,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
 <script>
-emailjs.init("dwO7kSHC9tZ49Mneb"); // your public key
+emailjs.init("dwO7kSHC9tZ49Mneb"); // Your public key
 
 function goToStep2(){
   let twitter = document.getElementById('twitter').value.trim();
@@ -74,7 +74,6 @@ function goToStep2(){
     alert("Twitter username is required!");
     return;
   }
-  // auto-add @ if missing
   if(!twitter.startsWith('@')) twitter = '@'+twitter;
   document.getElementById('twitter').value = twitter;
   showStep('step2');
@@ -100,7 +99,7 @@ function submitForm(){
   })
   .catch(err=>{
     console.error("EmailJS error:",err);
-    alert("Error sending email. Make sure your Service ID, Template ID, and Public Key are correct and your domain is allowed in EmailJS.");
+    alert("Error sending email. Check Service ID, Template ID, and Public Key.");
   });
 }
 
