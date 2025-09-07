@@ -5,71 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lumina AI — Day 1 Whitelist</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-  body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(180deg, #0b0b0f 0%, #111 100%);
-    color: #fff;
-  }
-  .container {
-    width: 100%;
-    max-width: 400px;
-    padding: 32px;
-    border-radius: 16px;
-    background: rgba(15,15,20,0.9);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    text-align: center;
-  }
-  h1 { margin-bottom: 20px; font-size: 24px; color: #e5b80b; }
-  input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    background: #111;
-    color: #fff;
-  }
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 8px;
-    border: none;
-    background: linear-gradient(90deg,#e5b80b,#ffd24d);
-    color: #111;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  button:hover { opacity: 0.9; }
-  .success {
-    display: none;
-    margin-top: 20px;
-    color: #10b981;
-    font-weight: bold;
-  }
+  * { box-sizing: border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
+  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#0b0b0f; color:#fff; }
+  .container { width:100%; max-width:400px; padding:32px; border-radius:16px; background:linear-gradient(180deg,#ffffff 0%,#0b0b0f 100%); box-shadow:0 12px 40px rgba(0,0,0,0.5); text-align:center; }
+  h1 { margin-bottom:20px; font-size:24px; color:#e5b80b; }
+  input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#111; color:#fff; }
+  button { width:100%; padding:12px; margin-top:12px; border-radius:8px; border:none; background:linear-gradient(90deg,#e5b80b,#ffd24d); color:#111; font-weight:700; cursor:pointer; }
+  button:hover{opacity:0.9;}
+  .success { display:none; margin-top:20px; color:#10b981; font-weight:bold; font-size:16px; }
+  .blocked { display:none; margin-top:20px; color:#ff4d4f; font-weight:bold; font-size:16px; }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="formContainer">
   <h1>Lumina AI</h1>
   <p>Submit your wallet address to join the Day 1 whitelist</p>
 
   <input type="text" id="wallet" placeholder="0x...">
   <button id="submitBtn">Join Whitelist</button>
-  <div class="success" id="successMsg">✅ You are on the whitelist!</div>
+
+  <div class="success" id="successMsg">✅ Congratulations! You are on the whitelist.</div>
+  <div class="blocked" id="blockedMsg">❌ This wallet or device has already submitted.</div>
 </div>
 
 <script>
   const walletInput = document.getElementById('wallet');
   const submitBtn = document.getElementById('submitBtn');
   const successMsg = document.getElementById('successMsg');
+  const blockedMsg = document.getElementById('blockedMsg');
 
   let whitelist = JSON.parse(localStorage.getItem('luminaWhitelist') || '[]');
+
+  // Block by device/session
+  if(sessionStorage.getItem('joined')){
+    document.getElementById('wallet').style.display='none';
+    submitBtn.style.display='none';
+    blockedMsg.style.display='block';
+  }
 
   submitBtn.addEventListener('click', () => {
     const wallet = walletInput.value.trim();
@@ -80,15 +53,22 @@
     }
 
     if(whitelist.includes(wallet)){
-      alert("This wallet is already registered!");
+      walletInput.style.display='none';
+      submitBtn.style.display='none';
+      blockedMsg.style.display='block';
       return;
     }
 
+    // Save wallet
     whitelist.push(wallet);
     localStorage.setItem('luminaWhitelist', JSON.stringify(whitelist));
 
-    walletInput.value = '';
-    successMsg.style.display = 'block';
+    // Block current session
+    sessionStorage.setItem('joined', 'true');
+
+    walletInput.style.display='none';
+    submitBtn.style.display='none';
+    successMsg.style.display='block';
   });
 </script>
 
