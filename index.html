@@ -4,81 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[Your Project] Task Rewards</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(120deg, #6a11cb, #2575fc);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    .task-card:hover {
+      transform: translateY(-5px);
+      transition: 0.3s;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-purple-500 to-pink-500 min-h-screen flex flex-col items-center justify-start text-white font-sans p-4">
+<body class="min-h-screen flex flex-col items-center justify-start text-white font-sans p-4">
 
-  <div class="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl mt-6">
+  <div class="max-w-xl w-full bg-black bg-opacity-60 p-6 rounded-3xl shadow-2xl mt-6 backdrop-blur-md">
     <h1 class="text-3xl font-bold mb-4 text-center">[Your Project] Task Rewards</h1>
-    <p class="mb-6 text-center">Complete tasks, earn points, and see your ranking on the leaderboard!</p>
+    <p class="mb-6 text-center text-gray-200">Complete tasks, earn points, and see your ranking on the leaderboard!</p>
 
-    <div id="tasks" class="space-y-4">
-      <div class="bg-purple-700 p-4 rounded-lg">
-        <p>✅ Follow us on X/Twitter</p>
-        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="10">Claim 10 points</button>
-      </div>
-      <div class="bg-purple-700 p-4 rounded-lg">
-        <p>✅ Tag 2 friends on social media</p>
-        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="15">Claim 15 points</button>
-      </div>
-      <div class="bg-purple-700 p-4 rounded-lg">
-        <p>✅ Share our project link</p>
-        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="20">Claim 20 points</button>
-      </div>
-    </div>
+    <input id="username" placeholder="Enter your name" class="w-full p-3 mb-4 rounded-xl text-black font-semibold"/>
+    <button id="startBtn" class="bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl mb-6 hover:bg-yellow-400 w-full shadow-lg">Start</button>
 
-    <p class="mt-6 text-center text-lg">Your Points: <span id="points">0</span></p>
+    <div id="tasks" class="space-y-5 hidden"></div>
+
+    <p class="mt-6 text-center text-lg font-semibold">Your Points: <span id="points">0</span></p>
   </div>
 
-  <div class="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl mt-6">
+  <div class="max-w-xl w-full bg-black bg-opacity-60 p-6 rounded-3xl shadow-2xl mt-6 backdrop-blur-md">
     <h2 class="text-2xl font-bold mb-4 text-center">Leaderboard</h2>
-    <ol id="leaderboard" class="list-decimal list-inside space-y-2">
-      <!-- Top users will appear here -->
-    </ol>
+    <ol id="leaderboard" class="list-decimal list-inside space-y-2"></ol>
   </div>
 
   <script>
-    let points = localStorage.getItem('userPoints') ? parseInt(localStorage.getItem('userPoints')) : 0;
-    const pointsDisplay = document.getElementById('points');
-    const claimedTasks = JSON.parse(localStorage.getItem('claimedTasks') || '[]');
-    const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    const supabaseUrl = "YOUR_SUPABASE_URL";
+    const supabaseKey = "YOUR_SUPABASE_KEY";
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    pointsDisplay.textContent = points;
+    let currentUser = null;
+    let userPoints = 0;
 
-    function updateLeaderboard() {
-      const lbEl = document.getElementById('leaderboard');
-      lbEl.innerHTML = '';
-      const sorted = leaderboard.sort((a,b) => b.points - a.points);
-      sorted.forEach(user => {
+    async function loadTasks() {
+      const { data: tasks } = await supabase.from('tasks').select('*');
+      const tasksDiv = document.getElementById('tasks');
+      tasksDiv.innerHTML = '';
+      tasksDiv.classList.remove('hidden');
+
+      for (const task of tasks) {
+        const btn = document.createElement('button');
+        btn.textContent = `Claim ${task.points} points`;
+        btn.className = 'bg-yellow-400 text-black px-4 py-2 rounded-lg mt-3 w-full font-semibold hover:bg-yellow-300 shadow-md';
+        btn.onclick = () => claimTask(task.id, task.points, btn);
+
+        const div = document.createElement('div');
+        div.className = 'task-card bg-gradient-to-r from-purple-700 to-pink-600 p-5 rounded-2xl shadow-lg';
+        div.innerHTML = `<p class="text-lg font-semibold">✅ ${task.title}</p>`;
+        div.appendChild(btn);
+        tasksDiv.appendChild(div);
+      }
+    }
+
+    async function claimTask(taskId, points, btn) {
+      const { data: claimed } = await supabase.from('claimed_tasks')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .eq('task_id', taskId);
+
+      if (claimed.length > 0) return alert("Task already claimed!");
+
+      await supabase.from('claimed_tasks').insert([{ user_id: currentUser.id, task_id: taskId }]);
+      userPoints += points;
+      await supabase.from('users').update({ points: userPoints }).eq('id', currentUser.id);
+      document.getElementById('points').textContent = userPoints;
+      btn.disabled = true;
+      btn.textContent = "Claimed";
+      loadLeaderboard();
+    }
+
+    async function loadLeaderboard() {
+      const { data: users } = await supabase.from('users').select('*').order('points', { ascending: false }).limit(10);
+      const lb = document.getElementById('leaderboard');
+      lb.innerHTML = '';
+      users.forEach(u => {
         const li = document.createElement('li');
-        li.textContent = `${user.name || 'Anonymous'} - ${user.points} pts`;
-        lbEl.appendChild(li);
+        li.textContent = `${u.name} - ${u.points} pts`;
+        lb.appendChild(li);
       });
     }
 
-    document.querySelectorAll('.claimTask').forEach((btn, index) => {
-      if (claimedTasks.includes(index)) btn.disabled = true;
-
-      btn.addEventListener('click', () => {
-        const pts = parseInt(btn.dataset.points);
-        points += pts;
-        pointsDisplay.textContent = points;
-        claimedTasks.push(index);
-        localStorage.setItem('userPoints', points);
-        localStorage.setItem('claimedTasks', JSON.stringify(claimedTasks));
-
-        btn.disabled = true;
-        btn.textContent = 'Claimed';
-
-        // Update leaderboard
-        const name = prompt("Enter your name for leaderboard:") || 'Anonymous';
-        leaderboard.push({name, points});
-        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-        updateLeaderboard();
-      });
-    });
-
-    updateLeaderboard();
+    document.getElementById('startBtn').onclick = async () => {
+      const name = document.getElementById('username').value || 'Anonymous';
+      const { data: user } = await supabase.from('users').insert([{ name, points: 0 }]).select().single();
+      currentUser = user;
+      userPoints = user.points;
+      document.getElementById('points').textContent = userPoints;
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('username').style.display = 'none';
+      loadTasks();
+      loadLeaderboard();
+    }
   </script>
 </body>
 </html>
