@@ -1,102 +1,84 @@
-// pages/index.js
-import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Your Project] Task Rewards</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-purple-500 to-pink-500 min-h-screen flex flex-col items-center justify-start text-white font-sans p-4">
 
-export default function Home() {
-  const [wallet, setWallet] = useState(null);
-  const [points, setPoints] = useState(0);
-  const [claimedTasks, setClaimedTasks] = useState([]);
+  <div class="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl mt-6">
+    <h1 class="text-3xl font-bold mb-4 text-center">[Your Project] Task Rewards</h1>
+    <p class="mb-6 text-center">Complete tasks, earn points, and see your ranking on the leaderboard!</p>
 
-  const tasks = [
-    { id: 1, title: "Follow us on X/Twitter", points: 10 },
-    { id: 2, title: "Tag 2 friends on social media", points: 15 },
-    { id: 3, title: "Mint your first NFT", points: 50 }
-  ];
-
-  async function connectWallet() {
-    if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-      setWallet(accounts[0]);
-    } else {
-      alert("Please install MetaMask");
-    }
-  }
-
-  function claimTask(task) {
-    if (!claimedTasks.includes(task.id)) {
-      setPoints(points + task.points);
-      setClaimedTasks([...claimedTasks, task.id]);
-    }
-  }
-
-  async function mintNFT() {
-    // Example NFT mint logic (replace with your contract)
-    if (!wallet) return alert("Connect wallet first!");
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const contractAddress = "YOUR_NFT_CONTRACT_ADDRESS";
-      const abi = [ "function mint(address to) public" ];
-      const contract = new ethers.Contract(contractAddress, abi, signer);
-      const tx = await contract.mint(wallet);
-      await tx.wait();
-      alert("NFT minted successfully!");
-    } catch (err) {
-      console.log(err);
-      alert("Minting failed");
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 flex flex-col items-center justify-center text-white font-sans p-4">
-      <div className="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl text-center">
-        <h1 className="text-3xl font-bold mb-4">[Your Project] Task Rewards</h1>
-        {!wallet ? (
-          <button
-            className="bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg mb-6 hover:bg-yellow-400"
-            onClick={connectWallet}
-          >
-            Connect Wallet
-          </button>
-        ) : (
-          <p className="mb-4">Wallet: {wallet}</p>
-        )}
-
-        <div className="space-y-4">
-          {tasks.map(task => (
-            <div key={task.id} className="bg-purple-700 p-4 rounded-lg">
-              <p>{task.title}</p>
-              {task.id === 3 ? (
-                <button
-                  className={`bg-yellow-400 text-black px-4 py-1 rounded mt-2 ${
-                    claimedTasks.includes(task.id) ? "opacity-50" : ""
-                  }`}
-                  onClick={() => {
-                    claimTask(task);
-                    mintNFT();
-                  }}
-                  disabled={claimedTasks.includes(task.id)}
-                >
-                  {claimedTasks.includes(task.id) ? "Claimed" : `Claim ${task.points} points & Mint NFT`}
-                </button>
-              ) : (
-                <button
-                  className={`bg-yellow-400 text-black px-4 py-1 rounded mt-2 ${
-                    claimedTasks.includes(task.id) ? "opacity-50" : ""
-                  }`}
-                  onClick={() => claimTask(task)}
-                  disabled={claimedTasks.includes(task.id)}
-                >
-                  {claimedTasks.includes(task.id) ? "Claimed" : `Claim ${task.points} points`}
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-6">Your Points: {points}</p>
+    <div id="tasks" class="space-y-4">
+      <div class="bg-purple-700 p-4 rounded-lg">
+        <p>✅ Follow us on X/Twitter</p>
+        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="10">Claim 10 points</button>
+      </div>
+      <div class="bg-purple-700 p-4 rounded-lg">
+        <p>✅ Tag 2 friends on social media</p>
+        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="15">Claim 15 points</button>
+      </div>
+      <div class="bg-purple-700 p-4 rounded-lg">
+        <p>✅ Share our project link</p>
+        <button class="bg-yellow-400 text-black px-4 py-1 rounded mt-2 claimTask" data-points="20">Claim 20 points</button>
       </div>
     </div>
-  );
-}
+
+    <p class="mt-6 text-center text-lg">Your Points: <span id="points">0</span></p>
+  </div>
+
+  <div class="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl mt-6">
+    <h2 class="text-2xl font-bold mb-4 text-center">Leaderboard</h2>
+    <ol id="leaderboard" class="list-decimal list-inside space-y-2">
+      <!-- Top users will appear here -->
+    </ol>
+  </div>
+
+  <script>
+    let points = localStorage.getItem('userPoints') ? parseInt(localStorage.getItem('userPoints')) : 0;
+    const pointsDisplay = document.getElementById('points');
+    const claimedTasks = JSON.parse(localStorage.getItem('claimedTasks') || '[]');
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+
+    pointsDisplay.textContent = points;
+
+    function updateLeaderboard() {
+      const lbEl = document.getElementById('leaderboard');
+      lbEl.innerHTML = '';
+      const sorted = leaderboard.sort((a,b) => b.points - a.points);
+      sorted.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.name || 'Anonymous'} - ${user.points} pts`;
+        lbEl.appendChild(li);
+      });
+    }
+
+    document.querySelectorAll('.claimTask').forEach((btn, index) => {
+      if (claimedTasks.includes(index)) btn.disabled = true;
+
+      btn.addEventListener('click', () => {
+        const pts = parseInt(btn.dataset.points);
+        points += pts;
+        pointsDisplay.textContent = points;
+        claimedTasks.push(index);
+        localStorage.setItem('userPoints', points);
+        localStorage.setItem('claimedTasks', JSON.stringify(claimedTasks));
+
+        btn.disabled = true;
+        btn.textContent = 'Claimed';
+
+        // Update leaderboard
+        const name = prompt("Enter your name for leaderboard:") || 'Anonymous';
+        leaderboard.push({name, points});
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        updateLeaderboard();
+      });
+    });
+
+    updateLeaderboard();
+  </script>
+</body>
+</html>
