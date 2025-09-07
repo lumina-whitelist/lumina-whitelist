@@ -1,75 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumina AI — Day 1 Whitelist</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lumina AI Tasks — Galxe Style</title>
+
 <style>
-  * { box-sizing: border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
-  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#0b0b0f; color:#fff; }
-  .container { width:100%; max-width:400px; padding:32px; border-radius:16px; background:linear-gradient(180deg,#ffffff 0%,#0b0b0f 100%); box-shadow:0 12px 40px rgba(0,0,0,0.5); text-align:center; }
-  h1 { margin-bottom:20px; font-size:24px; color:#e5b80b; }
-  input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#111; color:#fff; }
-  button { width:100%; padding:12px; margin-top:12px; border-radius:8px; border:none; background:linear-gradient(90deg,#e5b80b,#ffd24d); color:#111; font-weight:700; cursor:pointer; }
-  button:hover{opacity:0.9;}
-  .success { display:none; margin-top:20px; color:#10b981; font-weight:bold; font-size:16px; }
-  .blocked { display:none; margin-top:20px; color:#ff4d4f; font-weight:bold; font-size:16px; }
+  /* Root colors */
+  :root {
+    --accent: #e5b80b; /* gold */
+    --bg-white: #ffffff;
+    --bg-black: #0b0b0f;
+    --text-light: #fff;
+    --text-dark: #0b0b0f;
+    --muted: #9aa3b2;
+    --radius: 14px;
+  }
+
+  body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: linear-gradient(180deg, var(--bg-white) 0%, var(--bg-black) 100%);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 60px rgba(2,6,23,0.45);
+    overflow: hidden;
+  }
+
+  header {
+    padding: 24px;
+    background: linear-gradient(135deg, var(--bg-white) 0%, #f6f6f8 100%);
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #0f172a, #0b1220);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .tasks {
+    padding: 24px;
+    background: linear-gradient(180deg, rgba(11,11,15,0.95), rgba(2,6,23,1));
+    color: var(--text-light);
+  }
+
+  .task {
+    background: rgba(255,255,255,0.05);
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .task button {
+    background: var(--accent);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #111;
+    transition: transform 0.12s ease;
+  }
+
+  .task button:hover {
+    transform: translateY(-2px);
+  }
+
+  .progress-container {
+    margin-top: 20px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 18px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .points {
+    text-align: right;
+    font-size: 14px;
+    margin-top: 4px;
+    color: var(--muted);
+  }
+
+  .success {
+    display: none;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .success.active {
+    display: block;
+  }
+
+  .success .badge {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#0ea5a4,#10b981);
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    color: #fff;
+  }
+
 </style>
 </head>
 <body>
 
-<div class="container" id="formContainer">
-  <h1>Lumina AI</h1>
-  <p>Submit your wallet address to join the Day 1 whitelist</p>
+<div class="container">
+  <header>
+    <h1>Lumina AI Tasks</h1>
+    <div class="subtitle">Complete tasks to earn points and unlock rewards</div>
+  </header>
 
-  <input type="text" id="wallet" placeholder="0x...">
-  <button id="submitBtn">Join Whitelist</button>
+  <div class="tasks" id="tasksContainer">
+    <!-- Tasks will be injected here -->
+  </div>
 
-  <div class="success" id="successMsg">✅ Congratulations! You are on the whitelist.</div>
-  <div class="blocked" id="blockedMsg">❌ This wallet or device has already submitted.</div>
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="points" id="pointsDisplay">0 / 500 points</div>
+  </div>
+
+  <div class="success" id="successScreen">
+    <div class="badge">✓</div>
+    <h2>Congratulations!</h2>
+    <p>You've earned enough points and unlocked your reward!</p>
+  </div>
 </div>
 
 <script>
-  const walletInput = document.getElementById('wallet');
-  const submitBtn = document.getElementById('submitBtn');
-  const successMsg = document.getElementById('successMsg');
-  const blockedMsg = document.getElementById('blockedMsg');
+  const tasks = [
+    { id: 1, text: "Follow @Lumina_Wallet on Twitter", points: 100 },
+    { id: 2, text: "Join our Telegram group", points: 100 },
+    { id: 3, text: "Retweet pinned tweet", points: 100 },
+    { id: 4, text: "Like our Instagram post", points: 100 },
+    { id: 5, text: "Sign up for newsletter", points: 100 }
+  ];
 
-  let whitelist = JSON.parse(localStorage.getItem('luminaWhitelist') || '[]');
+  const pointsGoal = 500;
+  let userPoints = parseInt(localStorage.getItem('userPoints') || '0');
+  let completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '[]');
 
-  // Block by device/session
-  if(sessionStorage.getItem('joined')){
-    document.getElementById('wallet').style.display='none';
-    submitBtn.style.display='none';
-    blockedMsg.style.display='block';
+  const tasksContainer = document.getElementById('tasksContainer');
+  const progressFill = document.getElementById('progressFill');
+  const pointsDisplay = document.getElementById('pointsDisplay');
+  const successScreen = document.getElementById('successScreen');
+
+  function updateProgress() {
+    const percent = Math.min((userPoints / pointsGoal) * 100, 100);
+    progressFill.style.width = percent + '%';
+    pointsDisplay.textContent = `${userPoints} / ${pointsGoal} points`;
+
+    if(userPoints >= pointsGoal) {
+      successScreen.classList.add('active');
+    }
   }
 
-  submitBtn.addEventListener('click', () => {
-    const wallet = walletInput.value.trim();
+  function renderTasks() {
+    tasksContainer.innerHTML = '';
+    tasks.forEach(task => {
+      const completed = completedTasks.includes(task.id);
+      const taskDiv = document.createElement('div');
+      taskDiv.className = 'task';
+      taskDiv.innerHTML = `
+        <span>${task.text}</span>
+        <button ${completed ? 'disabled' : ''} data-id="${task.id}">${completed ? 'Done' : 'Complete'}</button>
+      `;
+      tasksContainer.appendChild(taskDiv);
+    });
 
-    if(!wallet || wallet.length < 26){
-      alert("Please enter a valid wallet address.");
-      return;
-    }
+    document.querySelectorAll('.task button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id);
+        if(!completedTasks.includes(id)){
+          completedTasks.push(id);
+          localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+          userPoints += tasks.find(t => t.id === id).points;
+          localStorage.setItem('userPoints', userPoints);
+          renderTasks();
+          updateProgress();
+        }
+      });
+    });
+  }
 
-    if(whitelist.includes(wallet)){
-      walletInput.style.display='none';
-      submitBtn.style.display='none';
-      blockedMsg.style.display='block';
-      return;
-    }
-
-    // Save wallet
-    whitelist.push(wallet);
-    localStorage.setItem('luminaWhitelist', JSON.stringify(whitelist));
-
-    // Block current session
-    sessionStorage.setItem('joined', 'true');
-
-    walletInput.style.display='none';
-    submitBtn.style.display='none';
-    successMsg.style.display='block';
-  });
+  renderTasks();
+  updateProgress();
 </script>
 
 </body>
