@@ -1,200 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lumina AI — Whitelist</title>
-
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-  (function(){
-    emailjs.init("dwO7kSHC9tZ49Mneb"); // public key
-  })();
-</script>
-
-<!-- Styles -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina AI — Day 1 Whitelist</title>
 <style>
-  :root{
-    --accent: #e5b80b;
-    --muted: #9aa3b2;
-    --radius: 14px;
-    --max-width: 520px;
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #0b0b0f 0%, #111 100%);
+    color: #fff;
   }
-
-  html,body{height:100%;margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-  body{
-    background: linear-gradient(180deg,#ffffff 0%,#ffffff 40%,#0b0b0f 100%);
-    display:flex;align-items:center;justify-content:center;padding:28px;
-    color:#0b0b0f;
+  .container {
+    width: 100%;
+    max-width: 400px;
+    padding: 32px;
+    border-radius: 16px;
+    background: rgba(15,15,20,0.9);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    text-align: center;
   }
-
-  .wrap{
-    width:100%;max-width:var(--max-width); border-radius:18px; overflow:hidden;
-    box-shadow:0 18px 60px rgba(2,6,23,0.45);
-    display:grid; grid-template-columns: 1fr;
+  h1 { margin-bottom: 20px; font-size: 24px; color: #e5b80b; }
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    background: #111;
+    color: #fff;
   }
-
-  .hero{
-    background: linear-gradient(135deg,#ffffff 0%,#f6f6f8 100%);
-    padding:32px;
-    text-align:left;
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(90deg,#e5b80b,#ffd24d);
+    color: #111;
+    font-weight: 700;
+    cursor: pointer;
   }
-  .logo{font-weight:800;font-size:22px;letter-spacing:1px;background:linear-gradient(90deg,#0f172a,#0b1220);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .subtitle{margin-top:8px;font-size:14px;color:var(--muted);}
-
-  .card{background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); padding:28px; border-radius:var(--radius); margin:12px; backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.04);}
-
-  .panel{background: linear-gradient(180deg, rgba(11,11,15,0.95) 0%, rgba(2,6,23,1) 100%); padding:30px; color:#fff;}
-  .panel h1{ margin:0 0 8px 0; font-size:20px; letter-spacing:0.3px; }
-  .panel p.lead{ margin:0 0 18px 0; color:#c6cbd1; font-size:14px; }
-
-  .input{width:100%; padding:12px 14px; border-radius:10px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); color:#fff; font-size:15px;}
-  .input::placeholder{color:rgba(255,255,255,0.45);}
-
-  .btn{width:100%; padding:12px 14px; border-radius:10px; background:linear-gradient(90deg,var(--accent),#ffd24d); border:none; color:#111; font-weight:700; cursor:pointer; font-size:15px; box-shadow:0 8px 22px rgba(229,184,11,0.14); transition:transform .12s ease;}
-  .btn:hover{ transform:translateY(-3px); }
-
-  .btn-ghost{width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff; cursor:pointer;}
-  .muted{ color: #9aa3b2; font-size:13px; }
-  .steps { display:block; }
-  .step { display:none; }
-  .step.active { display:block; }
-  .center{text-align:center;}
-  .success-badge{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:10px auto 18px;background: linear-gradient(135deg,#0ea5a4,#10b981);box-shadow: 0 8px 30px rgba(16,185,129,0.15);}
-  .success-badge span{ font-size:36px; color:white; font-weight:800; }
-  .small-note{ font-size:13px; color:#9aa3b2; margin-top:10px; }
-  footer{ text-align:center; padding:16px; color:#9aa3b2; font-size:13px; }
-
-  @media (max-width:720px){
-    .wrap{ margin:0 8px; }
-    .hero{ padding:20px; }
-    .panel{ padding:22px; }
+  button:hover { opacity: 0.9; }
+  .success {
+    display: none;
+    margin-top: 20px;
+    color: #10b981;
+    font-weight: bold;
   }
 </style>
 </head>
 <body>
-<div class="wrap" role="main">
-  <div class="hero card">
-    <div class="logo">LUMINA AI</div>
-    <div class="subtitle">Secure wallet checks • Day 1 NFT whitelist • Early access program</div>
-    <div style="margin-top:12px;color:#0b0b0b;font-size:13px;">Follow us to get updates and community perks. After following, continue to submit your wallet address to secure your spot.</div>
-  </div>
 
-  <div class="panel card" aria-live="polite">
-    <div class="steps">
-      <div id="step-follow" class="step active">
-        <h1>Step 1 — Follow Us</h1>
-        <p class="lead">Follow our official account to stay updated.</p>
-        <div style="margin-bottom:12px;">
-          <a id="openTwitter" class="btn" target="_blank" rel="noopener noreferrer" href="https://twitter.com/Lumina_Wallet">Follow @Lumina_Wallet</a>
-        </div>
-        <div style="display:flex;gap:10px;">
-          <button id="confirmFollow" class="btn-ghost">I followed — Continue</button>
-          <button id="skipFollow" class="btn-ghost">Skip (continue)</button>
-        </div>
-        <p class="small-note">Confirming is a UX step — we recommend following to get community benefits.</p>
-      </div>
+<div class="container">
+  <h1>Lumina AI</h1>
+  <p>Submit your wallet address to join the Day 1 whitelist</p>
 
-      <div id="step-info" class="step">
-        <h1>Step 2 — Contact</h1>
-        <p class="lead">Enter your email & Twitter (optional). Click Next to continue to wallet submission.</p>
-        <input id="email" class="input" type="email" placeholder="Email address" autocomplete="email" />
-        <input id="twitter" class="input" type="text" placeholder="Twitter username (optional)" />
-        <div style="display:flex;gap:10px;">
-          <button id="toWallet" class="btn">Next — Wallet ➜</button>
-          <button id="backToFollow" class="btn-ghost">Back</button>
-        </div>
-        <div id="infoError" class="muted" style="margin-top:10px; display:none;color:#ffb4b4;"></div>
-      </div>
-
-      <div id="step-wallet" class="step">
-        <h1>Step 3 — Wallet Address</h1>
-        <p class="lead">Submit the wallet address you’ll use for the Day 1 mint.</p>
-        <input id="wallet" class="input" type="text" placeholder="0x... or any wallet address" />
-        <div style="display:flex;gap:10px;">
-          <button id="submitWallet" class="btn">Submit & Join Whitelist</button>
-          <button id="backToInfo" class="btn-ghost">Back</button>
-        </div>
-        <div id="walletError" class="muted" style="margin-top:10px; display:none; color:#ffb4b4;"></div>
-        <div class="small-note">We will send a confirmation email once complete.</div>
-      </div>
-
-      <div id="step-success" class="step center">
-        <div class="success-badge"><span>✓</span></div>
-        <h1>You're on the whitelist</h1>
-        <p class="lead">Congratulations — you've secured a Day 1 whitelist spot.</p>
-        <div class="card" style="margin-top:18px;background:transparent;border:1px solid rgba(255,255,255,0.04);">
-          <div style="text-align:left;color:#cbd5e0;font-size:14px;line-height:1.5;">
-            <strong>What we saved:</strong>
-            <div id="savedSummary" style="margin-top:8px;"></div>
-          </div>
-        </div>
-        <p class="small-note">Check your inbox for a confirmation email.</p>
-      </div>
-
-      <div id="step-already" class="step center">
-        <h1>Already Registered</h1>
-        <p class="lead">This email is already on our whitelist. Please check your inbox for confirmation.</p>
-      </div>
-    </div>
-  </div>
+  <input type="text" id="wallet" placeholder="0x...">
+  <button id="submitBtn">Join Whitelist</button>
+  <div class="success" id="successMsg">✅ You are on the whitelist!</div>
 </div>
 
-<footer>© Lumina AI — Secure Wallet Checks & Day 1 NFT</footer>
-
 <script>
-  let submittedEmails = JSON.parse(localStorage.getItem('whitelistEmails')||'[]');
-  let submissions = JSON.parse(localStorage.getItem('whitelistSubmissions')||'[]');
+  const walletInput = document.getElementById('wallet');
+  const submitBtn = document.getElementById('submitBtn');
+  const successMsg = document.getElementById('successMsg');
 
-  function showStep(id){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); const el=document.getElementById(id); if(el) el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});}
-  function setError(elId,msg){const el=document.getElementById(elId); if(!el) return; if(msg){el.style.display='block'; el.textContent=msg;} else{el.style.display='none'; el.textContent='';}}
+  let whitelist = JSON.parse(localStorage.getItem('luminaWhitelist') || '[]');
 
-  document.getElementById('confirmFollow').addEventListener('click',()=>{showStep('step-info');});
-  document.getElementById('skipFollow').addEventListener('click',()=>{showStep('step-info');});
-  document.getElementById('backToFollow').addEventListener('click',()=>showStep('step-follow'));
-  document.getElementById('backToInfo').addEventListener('click',()=>showStep('step-info'));
+  submitBtn.addEventListener('click', () => {
+    const wallet = walletInput.value.trim();
 
-  document.getElementById('toWallet').addEventListener('click',()=>{
-    const emailInput=document.getElementById('email').value.trim().toLowerCase();
-    const twitterInput=document.getElementById('twitter').value.trim();
-    const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!emailInput || !emailRegex.test(emailInput)){setError('infoError','Please enter a valid email address.'); return;}
-    if(submittedEmails.includes(emailInput)){showStep('step-already'); return;}
-    window.__lumina_temp={email:emailInput,twitter:twitterInput};
-    setError('infoError','');
-    showStep('step-wallet');
+    if(!wallet || wallet.length < 26){
+      alert("Please enter a valid wallet address.");
+      return;
+    }
+
+    if(whitelist.includes(wallet)){
+      alert("This wallet is already registered!");
+      return;
+    }
+
+    whitelist.push(wallet);
+    localStorage.setItem('luminaWhitelist', JSON.stringify(whitelist));
+
+    walletInput.value = '';
+    successMsg.style.display = 'block';
   });
-
-  document.getElementById('submitWallet').addEventListener('click', async()=>{
-    const walletInput=document.getElementById('wallet').value.trim();
-    setError('walletError','');
-    if(!walletInput){setError('walletError','Please enter a wallet address.'); return;}
-    if(!(/^0x[a-fA-F0-9]{40}$/.test(walletInput)) && walletInput.length<26){setError('walletError','Wallet address looks too short. Check it.'); return;}
-    const temp=window.__lumina_temp||{};
-    const email=temp.email; const twitter=temp.twitter||'';
-    if(!email){showStep('step-info'); return;}
-
-    submittedEmails.push(email); localStorage.setItem('whitelistEmails',JSON.stringify(submittedEmails));
-    const record={email,email,twitter,timestamp:new Date().toISOString(),wallet:walletInput,id:Date.now()};
-    submissions.push(record); localStorage.setItem('whitelistSubmissions',JSON.stringify(submissions));
-
-    try{
-      await emailjs.send("service_qtl608z","template_9bjhvsh",{user_email:email,user_twitter:twitter,user_wallet:walletInput});
-      console.log('✅ Email sent');
-    }catch(err){console.error('Email error',err);alert('Confirmation email failed. We saved your submission.');}
-
-    const summary=document.getElementById('savedSummary');
-    if(summary){summary.innerHTML=`<div>Email: <strong>${escapeHtml(email)}</strong></div><div>Wallet: <strong>${escapeHtml(walletInput)}</strong></div>${twitter?`<div>Twitter: <strong>${escapeHtml(twitter)}</strong></div>`:''}`}
-    showStep('step-success'); window.history.pushState({}, '', '?step=success');
-  });
-
-  function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-  (function onLoad(){
-    const step=new URLSearchParams(window.location.search).get('step');
-    if(step==='success'){showStep('step-success');} else if(step==='blocked'){showStep('step-already');}
-  })();
 </script>
+
 </body>
 </html>
