@@ -1,231 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lumina AI Tasks — Galxe Style</title>
+// pages/index.js
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
 
-<style>
-  /* Root colors */
-  :root {
-    --accent: #e5b80b; /* gold */
-    --bg-white: #ffffff;
-    --bg-black: #0b0b0f;
-    --text-light: #fff;
-    --text-dark: #0b0b0f;
-    --muted: #9aa3b2;
-    --radius: 14px;
-  }
+export default function Home() {
+  const [wallet, setWallet] = useState(null);
+  const [points, setPoints] = useState(0);
+  const [claimedTasks, setClaimedTasks] = useState([]);
 
-  body {
-    margin: 0;
-    font-family: Inter, sans-serif;
-    background: linear-gradient(180deg, var(--bg-white) 0%, var(--bg-black) 100%);
-    color: var(--text-dark);
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 600px;
-    background: rgba(255,255,255,0.05);
-    border-radius: var(--radius);
-    box-shadow: 0 18px 60px rgba(2,6,23,0.45);
-    overflow: hidden;
-  }
-
-  header {
-    padding: 24px;
-    background: linear-gradient(135deg, var(--bg-white) 0%, #f6f6f8 100%);
-    text-align: center;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 800;
-    background: linear-gradient(90deg, #0f172a, #0b1220);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    margin-top: 8px;
-  }
-
-  .tasks {
-    padding: 24px;
-    background: linear-gradient(180deg, rgba(11,11,15,0.95), rgba(2,6,23,1));
-    color: var(--text-light);
-  }
-
-  .task {
-    background: rgba(255,255,255,0.05);
-    padding: 14px 18px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .task button {
-    background: var(--accent);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-    color: #111;
-    transition: transform 0.12s ease;
-  }
-
-  .task button:hover {
-    transform: translateY(-2px);
-  }
-
-  .progress-container {
-    margin-top: 20px;
-  }
-
-  .progress-bar {
-    width: 100%;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    height: 18px;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width 0.3s ease;
-  }
-
-  .points {
-    text-align: right;
-    font-size: 14px;
-    margin-top: 4px;
-    color: var(--muted);
-  }
-
-  .success {
-    display: none;
-    padding: 30px;
-    text-align: center;
-  }
-
-  .success.active {
-    display: block;
-  }
-
-  .success .badge {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: linear-gradient(135deg,#0ea5a4,#10b981);
-    margin: 20px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    font-weight: 800;
-    color: #fff;
-  }
-
-</style>
-</head>
-<body>
-
-<div class="container">
-  <header>
-    <h1>Lumina AI Tasks</h1>
-    <div class="subtitle">Complete tasks to earn points and unlock rewards</div>
-  </header>
-
-  <div class="tasks" id="tasksContainer">
-    <!-- Tasks will be injected here -->
-  </div>
-
-  <div class="progress-container">
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="points" id="pointsDisplay">0 / 500 points</div>
-  </div>
-
-  <div class="success" id="successScreen">
-    <div class="badge">✓</div>
-    <h2>Congratulations!</h2>
-    <p>You've earned enough points and unlocked your reward!</p>
-  </div>
-</div>
-
-<script>
   const tasks = [
-    { id: 1, text: "Follow @Lumina_Wallet on Twitter", points: 100 },
-    { id: 2, text: "Join our Telegram group", points: 100 },
-    { id: 3, text: "Retweet pinned tweet", points: 100 },
-    { id: 4, text: "Like our Instagram post", points: 100 },
-    { id: 5, text: "Sign up for newsletter", points: 100 }
+    { id: 1, title: "Follow us on X/Twitter", points: 10 },
+    { id: 2, title: "Tag 2 friends on social media", points: 15 },
+    { id: 3, title: "Mint your first NFT", points: 50 }
   ];
 
-  const pointsGoal = 500;
-  let userPoints = parseInt(localStorage.getItem('userPoints') || '0');
-  let completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '[]');
-
-  const tasksContainer = document.getElementById('tasksContainer');
-  const progressFill = document.getElementById('progressFill');
-  const pointsDisplay = document.getElementById('pointsDisplay');
-  const successScreen = document.getElementById('successScreen');
-
-  function updateProgress() {
-    const percent = Math.min((userPoints / pointsGoal) * 100, 100);
-    progressFill.style.width = percent + '%';
-    pointsDisplay.textContent = `${userPoints} / ${pointsGoal} points`;
-
-    if(userPoints >= pointsGoal) {
-      successScreen.classList.add('active');
+  async function connectWallet() {
+    if (window.ethereum) {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const accounts = await provider.send("eth_requestAccounts", []);
+      setWallet(accounts[0]);
+    } else {
+      alert("Please install MetaMask");
     }
   }
 
-  function renderTasks() {
-    tasksContainer.innerHTML = '';
-    tasks.forEach(task => {
-      const completed = completedTasks.includes(task.id);
-      const taskDiv = document.createElement('div');
-      taskDiv.className = 'task';
-      taskDiv.innerHTML = `
-        <span>${task.text}</span>
-        <button ${completed ? 'disabled' : ''} data-id="${task.id}">${completed ? 'Done' : 'Complete'}</button>
-      `;
-      tasksContainer.appendChild(taskDiv);
-    });
-
-    document.querySelectorAll('.task button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = parseInt(btn.dataset.id);
-        if(!completedTasks.includes(id)){
-          completedTasks.push(id);
-          localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
-          userPoints += tasks.find(t => t.id === id).points;
-          localStorage.setItem('userPoints', userPoints);
-          renderTasks();
-          updateProgress();
-        }
-      });
-    });
+  function claimTask(task) {
+    if (!claimedTasks.includes(task.id)) {
+      setPoints(points + task.points);
+      setClaimedTasks([...claimedTasks, task.id]);
+    }
   }
 
-  renderTasks();
-  updateProgress();
-</script>
+  async function mintNFT() {
+    // Example NFT mint logic (replace with your contract)
+    if (!wallet) return alert("Connect wallet first!");
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contractAddress = "YOUR_NFT_CONTRACT_ADDRESS";
+      const abi = [ "function mint(address to) public" ];
+      const contract = new ethers.Contract(contractAddress, abi, signer);
+      const tx = await contract.mint(wallet);
+      await tx.wait();
+      alert("NFT minted successfully!");
+    } catch (err) {
+      console.log(err);
+      alert("Minting failed");
+    }
+  }
 
-</body>
-</html>
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 flex flex-col items-center justify-center text-white font-sans p-4">
+      <div className="max-w-xl w-full bg-black bg-opacity-50 p-6 rounded-2xl shadow-xl text-center">
+        <h1 className="text-3xl font-bold mb-4">[Your Project] Task Rewards</h1>
+        {!wallet ? (
+          <button
+            className="bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg mb-6 hover:bg-yellow-400"
+            onClick={connectWallet}
+          >
+            Connect Wallet
+          </button>
+        ) : (
+          <p className="mb-4">Wallet: {wallet}</p>
+        )}
+
+        <div className="space-y-4">
+          {tasks.map(task => (
+            <div key={task.id} className="bg-purple-700 p-4 rounded-lg">
+              <p>{task.title}</p>
+              {task.id === 3 ? (
+                <button
+                  className={`bg-yellow-400 text-black px-4 py-1 rounded mt-2 ${
+                    claimedTasks.includes(task.id) ? "opacity-50" : ""
+                  }`}
+                  onClick={() => {
+                    claimTask(task);
+                    mintNFT();
+                  }}
+                  disabled={claimedTasks.includes(task.id)}
+                >
+                  {claimedTasks.includes(task.id) ? "Claimed" : `Claim ${task.points} points & Mint NFT`}
+                </button>
+              ) : (
+                <button
+                  className={`bg-yellow-400 text-black px-4 py-1 rounded mt-2 ${
+                    claimedTasks.includes(task.id) ? "opacity-50" : ""
+                  }`}
+                  onClick={() => claimTask(task)}
+                  disabled={claimedTasks.includes(task.id)}
+                >
+                  {claimedTasks.includes(task.id) ? "Claimed" : `Claim ${task.points} points`}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-6">Your Points: {points}</p>
+      </div>
+    </div>
+  );
+}
